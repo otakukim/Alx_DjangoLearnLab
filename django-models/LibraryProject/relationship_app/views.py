@@ -65,6 +65,25 @@ class LibraryDetailView(DetailView):
     model = Library
     template_name = 'relationship_app/library_detail.html'
     context_object_name = 'library'
+    from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
+def user_login(request):
+    # login logic
+
+def user_logout(request):
+    # logout logic
+
+def register(request):
+    # registration logic
+
+@login_required
+def home(request):
+    return render(request, 'relationship_app/home.html', {'user': request.user})
+
+
 
 
 
