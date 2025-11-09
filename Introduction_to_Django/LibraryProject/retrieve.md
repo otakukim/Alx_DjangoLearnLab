@@ -1,2 +1,4 @@
-book = Book.objects.get(title="1984")
-<Book: 1984 by George Orwell(1949)>
+retrieved_book.title = "Nineteen Eighty-Four"
+retrieved_book.save()
+
+Book.objects.get(id=book.id)
