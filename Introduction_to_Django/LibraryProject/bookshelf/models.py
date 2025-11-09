@@ -2,6 +2,11 @@ from django.db import models
 
 # Create your models here.
 from django.db import models
+from django.contrib import admin
+from .models import Book
+
+# Register the Book model
+admin.site.register(Book)
 
 class Book(models.Model):
     title = models.CharField(max_length=200)
@@ -10,3 +15,4 @@ class Book(models.Model):
 
     def __str__(self):
         return f"{self.title} by {self.author} ({self.publication_year})"
+
