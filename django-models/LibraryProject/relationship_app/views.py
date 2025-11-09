@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
 
 # User Login View
 def user_login(request):
@@ -82,6 +83,7 @@ def register(request):
 @login_required
 def home(request):
     return render(request, 'relationship_app/home.html', {'user': request.user})
+
 
 
 
