@@ -1,58 +1,60 @@
-from django.shortcuts import render
+# relationship_app/views.py
+from django.shortcuts import render, redirect
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib import messages
 
-# Create your views here.
-from django.shortcuts import render, get_object_or_404
-from django.views.generic import DetailView
-from .models import Book
-from .models import Library
-from django.views.generic.detail import DetailView
-# Function-based view to list all books
-def list_books(request):
-    books = Book.objects.all()
-    return render(request, 'relationship_app/list_books.html', {'books': books})
+# User Login View
+def user_login(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                messages.success(request, f"Welcome {username}!")
+                return redirect('home')  # Replace with your home page URL name
+        messages.error(request, "Invalid username or password.")
+    else:
+        form = AuthenticationForm()
+    return render(request, 'relationship_app/login.html', {'form': form})
+
+# User Logout View
+def user_logout(request):
+    logout(request)
+    messages.info(request, "You have successfully logged out.")
+    return render(request, 'relationship_app/logout.html')
+
+# User Registration View
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Automatically log in after registration
+            messages.success(request, f"Account created for {user.username}!")
+            return redirect('home')  # Replace with your home page URL name
+        messages.error(request, "Please correct the errors below.")
+    else:
+        form = UserCreationForm()
+    return render(request, 'relationship_app/register.html', {'form': form})
+# relationship_app/urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('login/', views.user_login, name='login'),
+    path('logout/', views.user_logout, name='logout'),
+    path('register/', views.register, name='register'),
+    # Example home page
+    path('', views.home, name='home'),  # You can create a simple home view
+]
 
 
-# Class-based view to display library details
-class LibraryDetailView(DetailView):
-    model = Library
-    template_name = 'relationship_app/library_detail.html'
-    context_object_name = 'library'
-
-<!-- list_books.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>List of Books</title>
-</head>
-<body>
-    <h1>Books Available:</h1>
-    <ul>
-        {% for book in books %}
-        <li>{{ book.title }} by {{ book.author.name }}</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
 
 
-<!-- library_detail.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Library Detail</title>
-</head>
-<body>
-    <h1>Library: {{ library.name }}</h1>
-    <h2>Books in Library:</h2>
-    <ul>
-        {% for book in library.books.all %}
-        <li>{{ book.title }} by {{ book.author.name }} (Published {{ book.publication_year }})</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
 
 
 
