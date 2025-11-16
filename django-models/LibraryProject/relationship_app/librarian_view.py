@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import user_passes_test
 
-)
+
 
 def is_librarian(user):
     return hasattr(user, "userprofile") and user.userprofile.role == "Librarian"
