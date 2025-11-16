@@ -47,6 +47,31 @@ from .models import Book
 def book_list(request):
     books = Book.objects.all()
     return render(request, 'bookshelf/book_list.html', {'books': books})
+    from django.shortcuts import render, redirect, get_object_or_404
+from .models import Book
+
+def book_list(request):
+    # Safe ORM query
+    books = Book.objects.all()
+    return render(request, 'bookshelf/book_list.html', {'books': books})
+
+def create_book(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        author = request.POST.get('author')
+        year = request.POST.get('publication_year')
+
+        # Validate inputs (simple example)
+        if title and author and year.isdigit():
+            Book.objects.create(
+                title=title,
+                author=author,
+                publication_year=int(year)
+            )
+        return redirect('book_list')
+    return render(request, 'bookshelf/form_example.html')
+
+
 
 
 
