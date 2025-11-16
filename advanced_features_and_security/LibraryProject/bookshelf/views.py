@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import permission_required
 from .models import Book
-
+from .forms import ExampleForm
 @permission_required('advanced_features_and_security.can_view', raise_exception=True)
 def view_books(request):
     books = Book.objects.all()
@@ -70,6 +70,7 @@ def create_book(request):
             )
         return redirect('book_list')
     return render(request, 'bookshelf/form_example.html')
+
 
 
 
