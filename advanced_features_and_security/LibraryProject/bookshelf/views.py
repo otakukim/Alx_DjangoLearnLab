@@ -39,15 +39,14 @@ def delete_book(request, book_id):
         return redirect('view_books')
     return render(request, 'advanced_features_and_security/delete_book.html', {'book': book})
 
-# ----------------------------
-# Permissions & Groups
-# ----------------------------
-# Custom permissions defined in Book model:
-# - can_view: allows viewing books
-# - can_create: allows creating books
-# - can_edit: allows editing books
-# - can_delete: allows deleting books
-# Groups created: Viewers, Editors, Admins
-# Permissions assigned accordingly.
+from django.shortcuts import render
+from django.contrib.auth.decorators import permission_required
+from .models import Book
+
+@permission_required('bookshelf.can_view', raise_exception=True)
+def book_list(request):
+    books = Book.objects.all()
+    return render(request, 'bookshelf/book_list.html', {'books': books})
+
 
 
