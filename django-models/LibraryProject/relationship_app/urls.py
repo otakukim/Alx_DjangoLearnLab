@@ -14,7 +14,7 @@ urlpatterns = [
     path("library/<int:pk>/", LibraryDetailView.as_view(), name="library_detail"),
 ]
 path("", include("relationship_app.urls")),
-
+add_book/", "edit_book/
 from django.urls import path
 from .admin_view import admin_view
 from .librarian_view import librarian_view
