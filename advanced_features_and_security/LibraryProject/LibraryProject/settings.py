@@ -172,6 +172,8 @@ SECURE_BROWSER_XSS_FILTER = True  # Enable browser XSS filtering
 # X_FRAME_OPTIONS='DENY' prevents framing
 # SECURE_CONTENT_TYPE_NOSNIFF=True prevents content type sniffing
 # SECURE_BROWSER_XSS_FILTER=True enables browser XSS filtering
+SECURE_PROXY_SSL_HEADER", "HTTP_X_FORWARDED_PROTO
+
 
 
 
