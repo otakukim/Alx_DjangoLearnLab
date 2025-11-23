@@ -7,7 +7,7 @@ from django.http import JsonResponse
 
 # Create your views here.
 
-class BookListCreateAPIView(generics.ListCreateAPIView):
+class BookListAPIView(generics.ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
@@ -18,3 +18,4 @@ class BookViewSet(viewsets.ModelViewSet):
 
 def home(request):
     return JsonResponse({"message": "Welcome to the Book API!"})
+
