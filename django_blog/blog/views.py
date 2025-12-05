@@ -1,4 +1,4 @@
-rom django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
@@ -8,6 +8,8 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import LoginView
 from .models import Post
+from .models import Comment
+from .forms import CommentForm
 
 
 def home(request):
@@ -90,3 +92,44 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author
+#create comment
+    class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_form.html'
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        post_id = self.kwargs['post_id']
+        form.instance.post = Post.objects.get(id=post_id)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('post-detail', kwargs={'pk': self.object.post.id})
+
+
+# UPDATE COMMENT
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_form.html'
+
+    def get_success_url(self):
+        return reverse('post-detail', kwargs={'pk': self.object.post.id})
+
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.author
+
+
+# DELETE COMMENT
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Comment
+    template_name = 'blog/comment_confirm_delete.html'
+
+    def get_success_url(self):
+        return reverse('post-detail', kwargs={'pk': self.object.post.id})
+
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.author
