@@ -1,10 +1,11 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
+from .models import Post, Comment
 
 User = get_user_model()
 
-# Serializer for user registration
+# User Serializers
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
@@ -24,7 +25,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         Token.objects.create(user=user)  # create token automatically
         return user
 
-# Serializer for user profile
+
 class UserProfileSerializer(serializers.ModelSerializer):
     followers_count = serializers.SerializerMethodField()
     following_count = serializers.SerializerMethodField()
@@ -38,17 +39,20 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     def get_following_count(self, obj):
         return obj.following.count()
-    
-#Serializer for comments
+
+
+# Comment Serializer
 class CommentSerializer(serializers.ModelSerializer):
     author_username = serializers.CharField(source='author.username', read_only=True)
     post_id = serializers.IntegerField(source='post.id', read_only=True)
+    post = serializers.PrimaryKeyRelatedField(queryset=Post.objects.all(), write_only=True)
 
     class Meta:
         model = Comment
         fields = ['id', 'post', 'post_id', 'author', 'author_username', 'content', 'created_at', 'updated_at']
         read_only_fields = ['id', 'author', 'created_at', 'updated_at', 'author_username', 'post_id']
 
+# Post Serializer
 class PostSerializer(serializers.ModelSerializer):
     author_username = serializers.CharField(source='author.username', read_only=True)
     comments = CommentSerializer(many=True, read_only=True)  # nested read-only
@@ -61,4 +65,3 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_comments_count(self, obj):
         return obj.comments.count()
-
